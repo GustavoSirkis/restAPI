@@ -1,91 +1,190 @@
-📌 Visão Geral
+# API REST de Gerenciamento de Cursos
 
-Esta é uma API moderna construída com TypeScript e Fastify, projetada para ser rápida, eficiente e escalável. Estamos em constante evolução e planejamos implementar mais tecnologias em breve!
-✨ Tecnologias Atuais
+Uma API REST moderna desenvolvida com Fastify e TypeScript, utilizando PostgreSQL como banc## 🔍 Features
 
-    TypeScript - Linguagem tipada para maior segurança e produtividade
+- Logging formatado com `pino-pretty`
+- Documentação OpenAPI automática
+- Validação de dados com Zod
+- Migrations automáticas com Drizzle Kit
+- Interface de administração do banco com Drizzle Studio
 
-    Fastify - Framework web extremamente rápido e low-overhead
+## 🔄 Fluxo da Aplicação
 
-    Node.js - Ambiente de execução JavaScript server-side
+O diagrama abaixo ilustra o fluxo principal da aplicação, desde a requisição HTTP até a resposta, incluindo validação e interação com o banco de dados:
 
-🚀 Funcionalidades
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant F as Fastify Server
+    participant Z as Zod Validator
+    participant D as Drizzle ORM
+    participant DB as PostgreSQL
 
-(Descreva aqui as principais funcionalidades da sua API)
-🔧 Instalação
+    %% Fluxo de Criação de Curso
+    C->>+F: POST /courses
+    Note over C,F: { title, description }
+    F->>Z: Validar payload
+    alt Validação falha
+        Z-->>F: Erro de validação
+        F-->>C: 400 Bad Request
+    else Validação sucesso
+        Z-->>F: Dados validados
+        F->>+D: Inserir curso
+        D->>+DB: INSERT INTO courses
+        DB-->>-D: Retorna ID
+        D-->>-F: Curso criado
+        F-->>-C: 201 Created
+    end
 
-    Clone o repositório:
+    %% Fluxo de Consulta de Cursos
+    C->>+F: GET /courses
+    F->>+D: Buscar cursos
+    D->>+DB: SELECT * FROM courses
+    DB-->>-D: Lista de cursos
+    D-->>-F: Dados formatados
+    F-->>-C: 200 OK
+```
 
-bash
+## 📄 Licenças e Drizzle ORM para gerenciamento de dados. A API inclui documentação automática com Swagger/OpenAPI e interface de documentação com Scalar.
 
-git clone https://github.com/seu-usuario/nome-do-repositorio.git
+## 🚀 Tecnologias
 
-    Instale as dependências:
+Este projeto utiliza um stack moderno de tecnologias:
 
-bash
+- [Fastify](https://fastify.io/) - Framework web de alta performance
+- [TypeScript](https://www.typescriptlang.org/) - Tipagem estática para JavaScript
+- [PostgreSQL](https://www.postgresql.org/) - Banco de dados relacional
+- [Drizzle ORM](https://orm.drizzle.team/) - ORM TypeScript-first
+- [Zod](https://zod.dev/) - Validação de schemas
+- [Swagger/OpenAPI](https://swagger.io/) - Documentação da API
+- [@scalar/fastify-api-reference](https://github.com/scalar/scalar) - Interface moderna para documentação
 
-npm install
-# ou
-yarn install
+## 💻 Estrutura do Projeto
 
-    Configure o ambiente:
-
-bash
-
-cp .env.example .env
-# Edite o .env com suas configurações
-
-    Execute em desenvolvimento:
-
-bash
-
-npm run dev
-# ou
-yarn dev
-
-🏗️ Estrutura do Projeto
-text
-
+```
+.
 ├── src/
-│   ├── controllers/    # Controladores da API
-│   ├── routes/         # Definição de rotas
-│   ├── services/       # Lógica de negócio
-│   ├── interfaces/     # Tipos e interfaces TypeScript
-│   ├── plugins/        # Plugins Fastify
-│   └── app.ts          # Ponto de entrada
-├── test/               # Testes
-├── .env.example        # Modelo de variáveis de ambiente
-├── tsconfig.json       # Configuração TypeScript
-└── package.json        # Dependências e scripts
+│   ├── database/
+│   │   ├── client.ts    # Configuração do cliente do banco de dados
+│   │   └── schema.ts    # Schema do banco de dados (Drizzle ORM)
+│   ├── routes/
+│   │   ├── create-courses.ts
+│   │   ├── get-courses.ts
+│   │   └── get-courses-by-id.ts
+│   └── app.ts
+├── server.ts
+├── drizzle.config.ts
+└── docker-compose.yml
+```
 
-📅 Próximas Implementações
+## 📋 Pré-requisitos
 
-    Adicionar autenticação JWT
+- Node.js
+- PostgreSQL
+- Docker (opcional)
 
-    Implementar banco de dados (Prisma/TypeORM)
+## 🔧 Configuração do Ambiente
 
-    Configurar Docker
+1. Clone o repositório:
+```bash
+git clone https://github.com/GustavoSirkis/restAPI.git
+cd restAPI
+```
 
-    Adicionar sistema de cache (Redis)
+2. Instale as dependências:
+```bash
+npm install
+```
 
-    Implementar filas (BullMQ)
+3. Configure as variáveis de ambiente:
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+```env
+DATABASE_URL="postgresql://seu_usuario:sua_senha@localhost:5432/nome_do_banco"
+```
 
-🤝 Contribuição
+4. Execute as migrações do banco de dados:
+```bash
+npm run db:generate
+npm run db:migrate
+```
 
-Contribuições são bem-vindas! Siga os passos:
+## 🎮 Usando a API
 
-    Faça um fork do projeto
+Para iniciar o servidor em modo de desenvolvimento:
+```bash
+npm run dev
+```
 
-    Crie sua branch (git checkout -b feature/nova-feature)
+## 🎯 Endpoints da API
 
-    Commit suas mudanças (git commit -m 'Adiciona nova feature')
+### Cursos
 
-    Push para a branch (git push origin feature/nova-feature)
+#### GET `/courses`
+- **Descrição**: Lista todos os cursos cadastrados
+- **Resposta**: Array de cursos com ID e título
+- **Status Code**: 200
 
-    Abra um Pull Request
+#### GET `/courses/:id`
+- **Descrição**: Retorna detalhes de um curso específico
+- **Parâmetros**: ID do curso (UUID)
+- **Status Code**: 200
 
-📄 Licença
+#### POST `/courses`
+- **Descrição**: Cria um novo curso
+- **Corpo da Requisição**:
+  ```json
+  {
+    "title": "string (mínimo 5 caracteres)",
+    "description": "string (opcional)"
+  }
+  ```
+- **Status Code**: 201
+- **Resposta**: ID do curso criado
 
-("Licença pendente")
+## 🛠️ Scripts Disponíveis
 
-Desenvolvido com ❤️ por GuZ - Em constante evolução! 🚀
+- `npm run dev` - Inicia o servidor em modo de desenvolvimento com hot-reload
+- `npm run db:generate` - Gera as migrações do banco de dados
+- `npm run db:migrate` - Executa as migrações pendentes
+- `npm run db:studio` - Abre o Drizzle Studio para visualização do banco de dados
+
+## 📚 Documentação
+
+A API possui documentação interativa disponível em dois endpoints:
+
+- Swagger UI: `http://localhost:3333/docs`
+- Scalar API Reference: `http://localhost:3333/reference`
+
+## 🔐 Validação e Tipos
+
+- Utiliza Zod para validação de entrada e saída
+- Integração TypeScript completa com Fastify através do `fastify-type-provider-zod`
+- Schemas do banco definidos com Drizzle ORM garantindo type-safety
+
+## 📝 Recursos do Banco de Dados
+
+### Tabela: courses
+- `id`: UUID (Primary Key, auto-gerado)
+- `title`: Text (Único, não nulo)
+- `description`: Text (Opcional)
+
+### Tabela: users
+- `id`: UUID (Primary Key, auto-gerado)
+- `name`: Text (Não nulo)
+- `email`: Text (Único, não nulo)
+
+## 🔍 Features
+
+- Logging formatado com `pino-pretty`
+- Documentação OpenAPI automática
+- Validação de dados com Zod
+- Migrations automáticas com Drizzle Kit
+- Interface de administração do banco com Drizzle Studio
+
+## � Licença
+
+Este projeto está sob a licença ISC. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+Desenvolvido por GustavoSirkis 👋
