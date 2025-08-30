@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "title": "API",
-    "instructor": "John Doe "
+    "description": "Curso de API",
 }
 
 
@@ -15,3 +15,13 @@ GET http://localhost:3333/courses?orderBy=title
 ###
 
 GET http://localhost:3333/courses/4e11e84d-a177-4c9f-8be4-efbb432f07aa
+
+
+###
+POST http://localhost:3333/sessions
+Content-Type: application/json
+
+{
+    "email": "Aline.Carvalho@bol.com.br",
+    "password": "123456"
+}
