@@ -1,10 +1,11 @@
 POST http://localhost:3333/courses
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ZWQyYjhlNy1jNTQ0LTQzYjUtOTkzMS1iNWQwOTQ0MTY4YWUiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc1NjU5Njg1N30.cJd0tSAbA-WhnJ0ZNGppkAkYPusMs5txaPhoDnp7yTs
 
 
 {
-    "title": "API",
-    "description": "Curso de API",
+    "title": "JavaScri14224",
+    "description": "Curso de JavaScrip43"
 }
 
 
@@ -14,14 +15,14 @@ GET http://localhost:3333/courses?orderBy=title
 
 ###
 
-GET http://localhost:3333/courses/4e11e84d-a177-4c9f-8be4-efbb432f07aa
-
+GET http://localhost:3333/courses/ba72f8c6-62e6-423b-9604-fadf0d9a18e1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YmU1Y2ZmZS1jNWY1LTRjN2EtOWY5Mi0yN2Q4MjNjNTczMTciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTY1OTY4MDJ9.4vFMnM4JeXhn6_SfrFEvd6A5FFY9srkZOb_etua6Vr0
 
 ###
 POST http://localhost:3333/sessions
 Content-Type: application/json
 
 {
-    "email": "Aline.Carvalho@bol.com.br",
+    "email": "Hugo.Macedo@yahoo.com",
     "password": "123456"
 }

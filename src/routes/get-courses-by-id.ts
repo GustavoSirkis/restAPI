@@ -3,11 +3,15 @@ import type { FastifyPluginAsyncZod} from 'fastify-type-provider-zod'
 import { db } from '../database/client.ts'
 import { courses } from '../database/schema.ts'
 import z from 'zod'
-import id from 'zod/v4/locales/id.js';
+import { checkRequestJWT } from './hooks/check-request-jwt.ts';
+import { getAuthenticatedUserFromRequest } from '../utils/get-authenticated-user-from-request.ts';
 
 
 export const getCourseByIdRoute: FastifyPluginAsyncZod = async (server) => {
     server.get('/courses/:id', {
+        preHandler: [
+           checkRequestJWT,
+        ],
         schema: {
             tags: ['Courses'],
             summary: 'Get course by id',
@@ -27,6 +31,8 @@ export const getCourseByIdRoute: FastifyPluginAsyncZod = async (server) => {
             
         },
     }, async (req, reply) => {
+        const user = getAuthenticatedUserFromRequest(req)
+
         const courseId = req.params.id
 
         const result = await db
